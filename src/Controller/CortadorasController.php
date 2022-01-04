@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Controller\AppController;
@@ -35,20 +36,20 @@ class CortadorasController extends AppController
     {
         $cortadora = $this->Cortadoras->get($id, [
             'contain' => [
-                'Ordenots'=>[
-                    'conditions'=>[
+                'Ordenots' => [
+                    'conditions' => [
                         //'Ordenots.fechainiciocortadora <='=>date('Y-m-d')
                     ],
-                    'Ordenesdetrabajos'=>[
-                        'conditions'=>[
-                            'Ordenesdetrabajos.estado'=>'En Proceso',
-                            'Ordenesdetrabajos.cortado'=>1
+                    'Ordenesdetrabajos' => [
+                        'conditions' => [
+                            'Ordenesdetrabajos.estado' => 'En Proceso',
+                            'Ordenesdetrabajos.cortado' => 1
                         ],
-                        'Ordenesdepedidos'=>[
+                        'Ordenesdepedidos' => [
                             'Clientes'
                         ]
                     ],
-                    'sort'=>'Ordenots.prioridadcorte ASC'
+                    'sort' => 'Ordenots.prioridadcorte ASC'
                 ]
             ],
         ]);
