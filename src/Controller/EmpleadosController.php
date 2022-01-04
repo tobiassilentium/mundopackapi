@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Controller;
 
 use App\Controller\AppController;
@@ -17,50 +18,50 @@ class EmpleadosController extends AppController
      *
      * @return \Cake\Http\Response|null
      */
-    public function dashboard(){
+    public function dashboard()
+    {
         $this->loadModel('Extrusoras');
         $this->loadModel('Impresoras');
         $this->loadModel('Cortadoras');
 
-        $extrusoras = $this->Extrusoras->find('all',[
-            'contain'=>[
-                'Ordenots'=>[
-                    'Ordenesdetrabajos'=>[
+        $extrusoras = $this->Extrusoras->find('all', [
+            'contain' => [
+                'Ordenots' => [
+                    'Ordenesdetrabajos' => [
                         'Ordenesdepedidos'
                     ],
-                    'conditions'=>[
+                    'conditions' => [
                         "Ordenots.ordenesdetrabajo_id IN (Select id from ordenesdetrabajos where ordenesdetrabajos.estado = 'En Proceso')"
                     ]
                 ]
             ]
         ]);
-        $impresoras = $this->Impresoras->find('all',[
-            'contain'=>[
-                'Ordenots'=>[
-                    'Ordenesdetrabajos'=>['Ordenesdepedidos'],
-                    'conditions'=>[
+        $impresoras = $this->Impresoras->find('all', [
+            'contain' => [
+                'Ordenots' => [
+                    'Ordenesdetrabajos' => ['Ordenesdepedidos'],
+                    'conditions' => [
                         "Ordenots.ordenesdetrabajo_id IN (Select id from ordenesdetrabajos where ordenesdetrabajos.estado = 'En Proceso')"
                     ]
                 ]
             ]
         ]);
-        $cortadoras = $this->Cortadoras->find('all',[
-            'contain'=>[
-                'Ordenots'=>[
-                    'Ordenesdetrabajos'=>['Ordenesdepedidos'],
-                    'conditions'=>[
+        $cortadoras = $this->Cortadoras->find('all', [
+            'contain' => [
+                'Ordenots' => [
+                    'Ordenesdetrabajos' => ['Ordenesdepedidos'],
+                    'conditions' => [
                         "Ordenots.ordenesdetrabajo_id IN (Select id from ordenesdetrabajos where ordenesdetrabajos.estado = 'En Proceso')"
                     ]
                 ]
             ]
         ]);
 
-        $this->set(compact('extrusoras','impresoras','cortadoras'));
-
+        $this->set(compact('extrusoras', 'impresoras', 'cortadoras'));
     }
     public function index()
     {
-        $empleados = $this->paginate($this->Empleados);
+        $empleados = $this->Empleados->find('all');
 
         $this->set(compact('empleados'));
     }
@@ -76,50 +77,50 @@ class EmpleadosController extends AppController
     {
         $empleadoconsulta = $this->Empleados->newEntity();
         if ($this->request->is('post')) {
-            $fechaDesde = date('Y-m-d',strtotime($this->request->getData()['fechadesde']));
-            $fechaHasta = date('Y-m-d',strtotime($this->request->getData()['fechahasta']));
+            $fechaDesde = date('Y-m-d', strtotime($this->request->getData()['fechadesde']));
+            $fechaHasta = date('Y-m-d', strtotime($this->request->getData()['fechahasta']));
             $empleado = $this->Empleados->get($id, [
                 'contain' => [
-                    'Bobinasdecortes'=>[
+                    'Bobinasdecortes' => [
                         'Cortadoras',
-                        'conditions'=>[
-                            'Bobinasdecortes.fecha >='=>$fechaDesde,
-                            'Bobinasdecortes.fecha <='=>$fechaHasta,
+                        'conditions' => [
+                            'Bobinasdecortes.fecha >=' => $fechaDesde,
+                            'Bobinasdecortes.fecha <=' => $fechaHasta,
                         ],
                     ],
-                    'Bobinasdeextrusions'=>[
+                    'Bobinasdeextrusions' => [
                         'Extrusoras',
-                        'conditions'=>[
-                            'Bobinasdeextrusions.fecha >='=>$fechaDesde,
-                            'Bobinasdeextrusions.fecha <='=>$fechaHasta,
+                        'conditions' => [
+                            'Bobinasdeextrusions.fecha >=' => $fechaDesde,
+                            'Bobinasdeextrusions.fecha <=' => $fechaHasta,
                         ],
                     ],
-                    'Bobinasdeimpresions'=>[
+                    'Bobinasdeimpresions' => [
                         'Impresoras',
-                        'conditions'=>[
-                            'Bobinasdeimpresions.fecha >='=>$fechaDesde,
-                            'Bobinasdeimpresions.fecha <='=>$fechaHasta,
+                        'conditions' => [
+                            'Bobinasdeimpresions.fecha >=' => $fechaDesde,
+                            'Bobinasdeimpresions.fecha <=' => $fechaHasta,
                         ],
                     ]
                 ],
             ]);
-        }else{
+        } else {
             $empleado = $this->Empleados->get($id, [
                 'contain' => [
-                    'Bobinasdecortes'=>[
+                    'Bobinasdecortes' => [
                         'Cortadoras'
                     ],
-                    'Bobinasdeextrusions'=>[
+                    'Bobinasdeextrusions' => [
                         'Extrusoras'
                     ],
-                    'Bobinasdeimpresions'=>[
+                    'Bobinasdeimpresions' => [
                         'Impresoras'
                     ]
                 ],
             ]);
         }
 
-        $this->set(compact('empleado','empleadoconsulta'));
+        $this->set(compact('empleado', 'empleadoconsulta'));
     }
 
     /**

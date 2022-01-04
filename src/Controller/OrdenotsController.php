@@ -22,7 +22,8 @@ class OrdenotsController extends AppController
         $this->paginate = [
             'contain' => ['Extrusoras', 'Impresoras', 'Cortadoras', 'Ordenesdetrabajos'],
         ];
-        $ordenots = $this->paginate($this->Ordenots);
+
+        $ordenots = $this->Ordenots->find('all');
 
         $this->set(compact('ordenots'));
     }
